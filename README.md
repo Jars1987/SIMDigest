@@ -348,44 +348,6 @@ for details.
 
 ---
 
-## Roadmap
-
-### Phase 1 (Complete)
-
-- [x] Landing page with Solana branding
-- [x] Email subscription
-- [x] Live SIMD tracker with filtering
-- [x] Full proposal detail pages
-- [x] GitHub integration
-- [x] Real-time activity tracking
-
-### Phase 2 🚧 (In Progress)
-
-- [ ] Weekly automated newsletter
-- [ ] AI-generated summaries
-- [ ] Email delivery system
-- [ ] Digest queries and templates
-
-### Phase 3 🔮 (Future)
-
-- [ ] User accounts and preferences
-- [ ] Custom alerts per SIMD
-- [ ] Advanced search and filtering
-- [ ] Analytics dashboard
-
----
-
-## ⭐ Support
-
-If you find this project useful, please consider:
-
-- Starring the repository
-- Reporting bugs
-- Suggesting new features
-- Contributing code
-
----
-
 <div align="center">
   <p>Made with 💜 for the Solana ecosystem</p>
   <p>© 2026 SIMD Tracker - Apollo</p>
