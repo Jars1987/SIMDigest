@@ -1,0 +1,40 @@
+{
+  "name": "simd-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "setup:db": "tsx scripts/setup-db.ts",
+    "check:db": "tsx scripts/check-db.ts",
+    "sync": "tsx scripts/sync.ts",
+    "sync:proposals": "tsx scripts/sync-proposals.ts",
+    "sync:prs": "tsx scripts/sync-prs.ts"
+  },
+  "dependencies": {
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@supabase/supabase-js": "^2.39.3",
+    "react-markdown": "^9.0.1",
+    "remark-gfm": "^4.0.0",
+    "@octokit/rest": "^20.0.2",
+    "dotenv": "^16.4.1",
+    "postgres": "^3.4.3",
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.6",
+    "@types/react-dom": "^19.0.2",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "^15.1.6",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2",
+    "tsx": "^4.7.0"
+  }
+}
