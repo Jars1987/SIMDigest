@@ -3,11 +3,13 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL environment variable is required');
+const databaseUrl = process.env.DATABASE_URL_TRANSACTION_POOLER || process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error('DATABASE_URL_SESSION_POOLER or DATABASE_URL environment variable is required');
 }
 
-export const sql = postgres(process.env.DATABASE_URL, {
+export const sql = postgres(databaseUrl, {
   ssl: 'require',
   max: 10,
 });

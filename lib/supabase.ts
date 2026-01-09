@@ -8,8 +8,10 @@ const supabaseKey =
   '';
 
 if (!supabaseUrl || !supabaseKey) {
-  console.warn('⚠️  Supabase keys not configured. Using mock data.');
-  console.warn('   Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env');
+  console.error('\u274c CRITICAL: Supabase not configured!');
+  console.error('\u274c The application requires a database to function.');
+  console.error('\u274c Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your environment.');
+  console.error('\u274c Users will see error messages until this is fixed.');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseKey);

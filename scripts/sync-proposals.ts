@@ -29,23 +29,43 @@ async function parseProposalContent(content: string) {
       title = titleMatch ? titleMatch[1].trim() : 'Untitled Proposal';
     }
 
-    // Extract summary from frontmatter or first paragraph
+    // Extract summary from frontmatter, ## Summary section, or first paragraph
     let summary = data.summary || data.description || '';
+
     if (!summary) {
+      // Try to find ## Summary section in markdown
+      const summaryMatch = mainContent.match(/##\s+Summary\s*\n\n([\s\S]*?)(?=\n##|$)/i);
+      if (summaryMatch) {
+        summary = summaryMatch[1].trim();
+      }
+    }
+
+    if (!summary) {
+      // Fallback: get first substantial paragraph
       const paragraphs = mainContent.split('\n\n').filter(p =>
         p.trim() && !p.trim().startsWith('#') && p.trim().length > 50
       );
       summary = paragraphs[0]?.substring(0, 500) || '';
     }
 
+    // Truncate summary to 500 chars max
+    if (summary.length > 500) {
+      summary = summary.substring(0, 500);
+    }
+
     // Extract topics/tags
     const topics = data.topics || data.tags || [];
+
+    // Phase 2: Extract SIMD-1 lifecycle status from frontmatter
+    // Valid statuses: Idea, Draft, Review, Accepted, Implemented, Activated, Living, Stagnant, Withdrawn
+    const status = data.status || 'Draft';
 
     return {
       title: title.replace(/^SIMD-\d+:\s*/i, '').trim(),
       summary: summary.trim(),
       topics: topics.length > 0 ? topics : null,
       content: mainContent,
+      status,
     };
   } catch (error) {
     console.error('Error parsing content:', error);
@@ -54,6 +74,7 @@ async function parseProposalContent(content: string) {
       summary: '',
       topics: null,
       content,
+      status: 'Draft',
     };
   }
 }
@@ -149,7 +170,8 @@ async function syncProposals() {
           await sql`
             INSERT INTO simds (
               id, slug, title, proposal_path, proposal_sha, proposal_content,
-              proposal_updated_at, last_activity_at, status, summary, topics
+              proposal_updated_at, last_activity_at, status, summary, topics,
+              source_stage, main_proposal_path
             ) VALUES (
               ${simdId},
               ${slug},
@@ -159,18 +181,24 @@ async function syncProposals() {
               ${parsed.content},
               ${lastCommitDate},
               ${lastCommitDate},
-              'active',
+              ${parsed.status},
               ${parsed.summary || null},
-              ${parsed.topics ? JSON.stringify(parsed.topics) : null}
+              ${parsed.topics ? JSON.stringify(parsed.topics) : null},
+              'main',
+              ${proposal.path}
             )
             ON CONFLICT (id) DO UPDATE SET
               title = EXCLUDED.title,
+              proposal_path = EXCLUDED.proposal_path,
               proposal_sha = EXCLUDED.proposal_sha,
               proposal_content = EXCLUDED.proposal_content,
               proposal_updated_at = EXCLUDED.proposal_updated_at,
               last_activity_at = GREATEST(simds.last_activity_at, EXCLUDED.proposal_updated_at),
+              status = EXCLUDED.status,
               summary = EXCLUDED.summary,
               topics = EXCLUDED.topics,
+              source_stage = 'main',
+              main_proposal_path = EXCLUDED.main_proposal_path,
               updated_at = NOW()
           `;
 

@@ -90,6 +90,37 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
+
+            {/* Donation Banner */}
+            <div className="mt-12 max-w-2xl mx-auto p-6 rounded-xl bg-gradient-to-r from-solana-purple/10 to-solana-green/10 border border-solana-purple/30">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-solana-purple/20 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-solana-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-white mb-2">Support This Free Service</h3>
+                  <p className="text-sm text-gray-300 mb-3">
+                    AI-powered summaries are funded out-of-pocket to keep the Solana community informed.
+                    If you find this helpful, consider supporting with a small donation.
+                  </p>
+                  <div className="flex items-center gap-2 p-3 bg-white/5 rounded-lg border border-white/10">
+                    <code className="flex-1 text-xs text-solana-green font-mono break-all">
+                      NbtprKrcGxbHBEK8dCQTnSdYEd2cxQaEEkrLmMbMvpF
+                    </code>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText('NbtprKrcGxbHBEK8dCQTnSdYEd2cxQaEEkrLmMbMvpF');
+                      }}
+                      className="px-3 py-1.5 bg-solana-purple/20 hover:bg-solana-purple/30 text-solana-purple text-xs rounded-md transition-colors"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

@@ -11,19 +11,32 @@
     "check:db": "tsx scripts/check-db.ts",
     "sync": "tsx scripts/sync.ts",
     "sync:proposals": "tsx scripts/sync-proposals.ts",
-    "sync:prs": "tsx scripts/sync-prs.ts"
+    "sync:prs": "tsx scripts/sync-prs.ts",
+    "sync:prs:all": "tsx scripts/sync-prs.ts --all",
+    "sync:discussions": "tsx scripts/sync-discussions.ts",
+    "generate:summaries": "tsx scripts/generate-pr-summaries.ts",
+    "admin:setup": "tsx scripts/create-admins-table.ts",
+    "admin:add": "tsx scripts/add-admin.ts",
+    "admin:list": "tsx scripts/list-admins.ts"
   },
   "dependencies": {
+    "@octokit/graphql": "^9.0.3",
+    "@octokit/rest": "^20.0.2",
+    "@sendgrid/mail": "^8.1.6",
+    "@supabase/supabase-js": "^2.39.3",
+    "@types/bcrypt": "^6.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.4.1",
+    "gray-matter": "^4.0.3",
+    "jsonwebtoken": "^9.0.3",
     "next": "^15.1.6",
+    "openai": "^6.15.0",
+    "postgres": "^3.4.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@supabase/supabase-js": "^2.39.3",
     "react-markdown": "^9.0.1",
-    "remark-gfm": "^4.0.0",
-    "@octokit/rest": "^20.0.2",
-    "dotenv": "^16.4.1",
-    "postgres": "^3.4.3",
-    "gray-matter": "^4.0.3"
+    "remark-gfm": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
@@ -34,7 +47,7 @@
     "eslint-config-next": "^15.1.6",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.2",
-    "tsx": "^4.7.0"
+    "tsx": "^4.7.0",
+    "typescript": "^5.7.2"
   }
 }
