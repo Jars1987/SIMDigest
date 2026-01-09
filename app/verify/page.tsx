@@ -47,28 +47,29 @@ function VerifyContent() {
   }, [token]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
-          {status === 'loading' && 'Verifying...'}
-          {status === 'success' && 'Email Verified!'}
-          {status === 'error' && 'Verification Failed'}
+    <div className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center p-4">
+      <div className="absolute inset-0 bg-gradient-to-br from-solana-purple/20 via-solana-dark to-solana-green/20"></div>
+      <div className="relative max-w-md w-full bg-white/10 backdrop-blur-sm border border-solana-purple/30 rounded-lg p-8 text-center">
+        <h1 className="text-2xl font-bold mb-4">
+          {status === 'loading' && <span className="text-white">Verifying...</span>}
+          {status === 'success' && <span className="bg-gradient-solana bg-clip-text text-transparent">Email Verified!</span>}
+          {status === 'error' && <span className="text-red-400">Verification Failed</span>}
         </h1>
 
         {status === 'loading' && (
           <div className="flex justify-center mb-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-solana-purple"></div>
           </div>
         )}
 
         {status === 'success' && (
           <div className="mb-4">
-            <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-16 h-16 text-solana-green mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
             {email && (
-              <p className="text-gray-600 mb-2">
-                <strong>{email}</strong> has been verified.
+              <p className="text-gray-300 mb-2">
+                <strong className="text-white">{email}</strong> has been verified.
               </p>
             )}
           </div>
@@ -76,17 +77,17 @@ function VerifyContent() {
 
         {status === 'error' && (
           <div className="mb-4">
-            <svg className="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-16 h-16 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
         )}
 
-        <p className="text-gray-600 mb-6">{message}</p>
+        <p className="text-gray-300 mb-6">{message}</p>
 
         <Link
           href="/"
-          className="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+          className="inline-block bg-gradient-solana text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity"
         >
           Go to Homepage
         </Link>
@@ -97,13 +98,14 @@ function VerifyContent() {
 
 function LoadingFallback() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Verifying...</h1>
+    <div className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center p-4">
+      <div className="absolute inset-0 bg-gradient-to-br from-solana-purple/20 via-solana-dark to-solana-green/20"></div>
+      <div className="relative max-w-md w-full bg-white/10 backdrop-blur-sm border border-solana-purple/30 rounded-lg p-8 text-center">
+        <h1 className="text-2xl font-bold text-white mb-4">Verifying...</h1>
         <div className="flex justify-center mb-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-solana-purple"></div>
         </div>
-        <p className="text-gray-600">Please wait...</p>
+        <p className="text-gray-300">Please wait...</p>
       </div>
     </div>
   );
