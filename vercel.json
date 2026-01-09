@@ -2,15 +2,15 @@
   "crons": [
     {
       "path": "/api/cron/sync-proposals",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 6 * * *"
     },
     {
       "path": "/api/cron/sync-prs",
-      "schedule": "0 */2 * * *"
+      "schedule": "0 12 * * *"
     },
     {
       "path": "/api/cron/sync-discussions",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 18 * * *"
     },
     {
       "path": "/api/cron/generate-summaries",
