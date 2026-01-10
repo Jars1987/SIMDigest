@@ -18,7 +18,9 @@
 
 ## 🌟 Overview
 
-**SIMD Digest** is a modern web application that monitors and tracks [Solana Improvement Documents (SIMDs)](https://github.com/solana-foundation/solana-improvement-documents) in real-time. The platform provides:
+**SIMD Digest** is a modern web application that monitors and tracks
+[Solana Improvement Documents (SIMDs)](https://github.com/solana-foundation/solana-improvement-documents)
+in real-time. The platform provides:
 
 - **Real-time SIMD tracking** from GitHub
 - **AI-generated discussion summaries** using GPT-5-mini
@@ -26,41 +28,54 @@
 - **Automated data syncing** via cron jobs
 - **Beautiful Solana-branded UI** with gradient design
 
-**Perfect for:** Solana developers, validators, community members, and anyone interested in following protocol governance and improvements.
+**Perfect for:** Solana developers, validators, community members, and anyone
+interested in following protocol governance and improvements.
 
 ---
 
 ## ✨ Features
 
 ### 🔍 Real-Time SIMD Tracking
-- **Live Dashboard** - Three-feed view: Current Proposals, Merged SIMDs, and Active Discussions
-- **Advanced Filtering** - Sort by latest activity, discussion count, or proposal status
+
+- **Live Dashboard** - Three-feed view: Current Proposals, Merged SIMDs, and
+  Active Discussions
+- **Advanced Filtering** - Sort by latest activity, discussion count, or
+  proposal status
 - **Full Proposal View** - Complete SIMD content with markdown rendering
 - **GitHub Integration** - Direct links to source proposals and pull requests
 - **Activity Tracking** - Monitor comment activity and PR reviews in real-time
 
 ### 🤖 AI-Powered Summaries
-- **Automated Summaries** - GPT-5-mini generates concise summaries of PR discussions
-- **Incremental Updates** - Cost-efficient incremental summary generation (only new messages)
-- **Key Insights** - Focus on technical decisions, concerns, and consensus points
+
+- **Automated Summaries** - GPT-5-mini generates concise summaries of PR
+  discussions
+- **Incremental Updates** - Cost-efficient incremental summary generation (only
+  new messages)
+- **Key Insights** - Focus on technical decisions, concerns, and consensus
+  points
 - **Prompt Injection Protection** - Sanitized inputs with output validation
 
 ### 📧 Newsletter System
+
 - **Admin Dashboard** - Secure, JWT-authenticated newsletter management
-- **Email/Password Authentication** - Multi-admin support with bcrypt password hashing
-- **Draft & Send** - Create, edit, and send newsletters to subscribers via SendGrid
+- **Email/Password Authentication** - Multi-admin support with bcrypt password
+  hashing
+- **Draft & Send** - Create, edit, and send newsletters to subscribers via
+  SendGrid
 - **7-Day Digest Download** - Generate markdown reports of weekly SIMD activity
 - **Subscriber Management** - Track subscriber count and engagement
 - **Rate Limiting** - Protection against brute-force attacks (5 attempts/15 min)
 - **Email Deliverability** - SendGrid integration with unsubscribe links
 
 ### ⚙️ Automated Background Jobs
+
 - **Proposal Sync** - Every 6 hours (SIMDs change infrequently)
 - **PR Sync** - Every 2 hours (active discussions)
 - **Discussion Sync** - Every 6 hours (GitHub discussions)
 - **Summary Generation** - Daily at 2 AM UTC (AI summary updates)
 
 ### 🔐 Security Features
+
 - **JWT Authentication** - 24-hour token expiration
 - **Bcrypt Password Hashing** - 12 salt rounds for admin passwords
 - **Rate Limiting** - Login attempt throttling
@@ -74,6 +89,7 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Node.js** 18 or higher
 - **npm** or yarn
 - **Supabase** account (free tier works)
@@ -83,12 +99,14 @@
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/Jars1987/SIMDigest.git
    cd SIMDigest
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
@@ -96,14 +114,17 @@
 3. **Set up environment variables**
 
    Copy `.env.example` to `.env` and fill in your credentials:
+
    ```bash
    cp .env.example .env
    ```
 
    Required environment variables:
+
    ```bash
    # Database
    DATABASE_URL=postgresql://username:password@host:5432/database
+   DATABASE_URL_TRANSACTION_POOLER=postgresql://postgres.<user-name>:<your-password>@aws-1-eu-west-1.pooler.supabase.com:6543/postgres
 
    # GitHub API (get token at: https://github.com/settings/tokens)
    GITHUB_TOKEN=ghp_your_github_token
@@ -129,17 +150,20 @@
    ```
 
 4. **Create database tables**
+
    ```bash
    npm run setup:db
    ```
 
 5. **Setup admin account**
+
    ```bash
    npm run admin:setup    # Create admin table
    npm run admin:add -- your-email@example.com
    ```
 
 6. **Sync initial data**
+
    ```bash
    npm run sync:proposals  # Sync SIMD proposals
    npm run sync:prs        # Sync PRs and discussions
@@ -147,6 +171,7 @@
    ```
 
 7. **Start development server**
+
    ```bash
    npm run dev
    ```
@@ -158,31 +183,20 @@
 
 ---
 
-## 📖 Documentation
-
-Complete guides available in the `/docs` folder:
-
-| Guide | Purpose |
-|-------|---------|
-| **[GETTING_STARTED.md](./docs/GETTING_STARTED.md)** | Quick setup checklist and overview |
-| **[ADMIN_SETUP_GUIDE.md](./docs/ADMIN_SETUP_GUIDE.md)** | Add admin users and manage accounts |
-| **[NEWSLETTER_WORKFLOW_GUIDE.md](./docs/NEWSLETTER_WORKFLOW_GUIDE.md)** | Create and send newsletters |
-| **[VERCEL_DEPLOYMENT_GUIDE.md](./docs/VERCEL_DEPLOYMENT_GUIDE.md)** | Deploy to production with Vercel |
-| **[SECURITY_AUDIT.md](./docs/SECURITY_AUDIT.md)** | Security review and fixes |
-| **[CRON_JOBS.md](./docs/CRON_JOBS.md)** | Background job documentation |
-
----
-
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **[Next.js 15](https://nextjs.org/)** - React framework (App Router)
 - **[TypeScript](https://www.typescriptlang.org/)** - Type safety
 - **[Tailwind CSS](https://tailwindcss.com/)** - Styling
-- **[react-markdown](https://github.com/remarkjs/react-markdown)** - Markdown rendering
-- **[remark-gfm](https://github.com/remarkjs/remark-gfm)** - GitHub Flavored Markdown
+- **[react-markdown](https://github.com/remarkjs/react-markdown)** - Markdown
+  rendering
+- **[remark-gfm](https://github.com/remarkjs/remark-gfm)** - GitHub Flavored
+  Markdown
 
 ### Backend
+
 - **[Supabase](https://supabase.com/)** - PostgreSQL database
 - **[GitHub REST API](https://docs.github.com/en/rest)** - SIMD data source
 - **[GitHub GraphQL API](https://docs.github.com/en/graphql)** - Discussion data
@@ -190,18 +204,22 @@ Complete guides available in the `/docs` folder:
 - **[SendGrid](https://sendgrid.com/)** - Transactional email delivery
 
 ### Security & Auth
-- **[jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)** - JWT authentication
+
+- **[jsonwebtoken](https://github.com/auth0/node-jsonwebtoken)** - JWT
+  authentication
 - **[bcrypt](https://github.com/kelektiv/node.bcrypt.js)** - Password hashing
 
 ### Deployment
-- **[Vercel](https://vercel.com/)** - Hosting and serverless functions
-- **Vercel Cron Jobs** - Automated background tasks
+
+- **[Vercel](https://vercel.com/)**
+- **Vercel Cron Jobs**
 
 ---
 
 ## 📜 Available Scripts
 
 ### Development
+
 ```bash
 npm run dev          # Start development server (localhost:3001)
 npm run build        # Build for production
@@ -210,6 +228,7 @@ npm run lint         # Run ESLint
 ```
 
 ### Database & Sync
+
 ```bash
 npm run setup:db            # Create database tables
 npm run check:db            # Check database status
@@ -220,6 +239,7 @@ npm run generate:summaries  # Generate AI summaries
 ```
 
 ### Admin Management
+
 ```bash
 npm run admin:setup    # Create admin table
 npm run admin:add      # Add new admin user
@@ -286,87 +306,40 @@ PostgreSQL database with the following tables:
 
 See [database/schema.sql](./database/schema.sql) for the complete schema.
 
----
-
-## 🌐 Deployment
-
-### Deploy to Vercel
-
-1. **Push to GitHub**
-   ```bash
-   git add .
-   git commit -m "feat: ready for deployment"
-   git push
-   ```
-
-2. **Import to Vercel**
-   - Go to [vercel.com](https://vercel.com)
-   - Import your GitHub repository
-   - Configure environment variables (see `.env.example`)
-
-3. **Configure Cron Jobs**
-   - Cron jobs are automatically configured via `vercel.json`
-   - Jobs run automatically after deployment
-
-4. **Setup Email Service**
-   - Create [SendGrid](https://sendgrid.com) account (free tier: 100 emails/day)
-   - Generate API key at https://app.sendgrid.com/settings/api_keys
-   - Verify your sender email/domain in SendGrid
-   - Add SendGrid credentials to environment variables:
-     ```bash
-     SENDGRID_API_KEY=SG.your_api_key
-     SENDGRID_FROM_EMAIL=noreply@yourdomain.com
-     SENDGRID_FROM_NAME=SIMD Digest
-     ```
-
-**See [VERCEL_DEPLOYMENT_GUIDE.md](./docs/VERCEL_DEPLOYMENT_GUIDE.md) for detailed instructions.**
-
----
-
-## 🔐 Security
-
-This project implements industry-standard security practices:
-
-- ✅ **JWT Authentication** with 24-hour expiration
-- ✅ **Bcrypt Password Hashing** (12 salt rounds)
-- ✅ **Rate Limiting** on authentication endpoints
-- ✅ **Server-side Input Validation**
-- ✅ **GDPR Compliance** (no PII in logs)
-- ✅ **Prompt Injection Protection** for AI summaries
-- ✅ **Cron Job Authorization** with secret tokens
-- ✅ **Environment Variable Protection** (.env in .gitignore)
-
-See [SECURITY_AUDIT.md](./docs/SECURITY_AUDIT.md) for the complete security review.
-
----
-
 ## 💰 Support This Project
 
 **SIMD Digest is free and open source**, but running it requires ongoing costs:
 
 ### Operational Costs
-- **OpenAI API** - GPT-5-mini for AI-powered discussion summaries (~$10-30/month depending on activity)
-- **Vercel Hosting** - Serverless functions and cron jobs (Free tier available, Pro recommended for cron: $20/month)
+
+- **OpenAI API** - GPT-5-mini for AI-powered discussion summaries (~$10-30/month
+  depending on activity)
+- **Vercel Hosting** - Serverless functions and cron jobs (Free tier available,
+  Pro recommended for cron: $20/month)
 - **Supabase Database** - PostgreSQL hosting (Free tier available)
 - **Domain & Infrastructure** - Custom domain and maintenance
 
 ### Support Development
 
-If you find SIMD Digest useful, consider supporting its development and maintenance:
+If you find SIMD Digest useful, consider supporting its development and
+maintenance:
 
 **Solana Donations:**
+
 ```
 NbtprKrcGxbHBEK8dCQTnSdYEd2cxQaEEkrLmMbMvpF
 ```
 
 Your donations help:
+
 - 💸 Cover OpenAI API costs for AI summaries
 - 🖥️ Maintain server infrastructure and hosting
 - 🚀 Add new features and improvements
 - 📧 Keep the newsletter service running
 - 🔧 Ongoing maintenance and updates
 
-**Every contribution helps keep SIMD Digest running for the entire Solana community!** 🙏
+**Every contribution helps keep SIMD Digest running for the entire Solana
+community!** 🙏
 
 ---
 
@@ -375,6 +348,7 @@ Your donations help:
 Contributions are welcome! Here's how you can help:
 
 ### Ways to Contribute
+
 - 🐛 **Report bugs** - Open an issue with details
 - 💡 **Suggest features** - Share your ideas in discussions
 - 📝 **Improve documentation** - Help others get started
@@ -382,6 +356,7 @@ Contributions are welcome! Here's how you can help:
 - ⭐ **Star the repo** - Show your support!
 
 ### Development Workflow
+
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
@@ -389,8 +364,8 @@ Contributions are welcome! Here's how you can help:
 5. Open a Pull Request
 
 ### Code Standards
+
 - Follow TypeScript best practices
-- Use ESLint for code quality
 - Add tests for new features
 - Update documentation as needed
 
@@ -398,9 +373,11 @@ Contributions are welcome! Here's how you can help:
 
 ## 📄 License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE)
+file for details.
 
 You are free to:
+
 - ✅ Use commercially
 - ✅ Modify
 - ✅ Distribute
@@ -413,34 +390,18 @@ You are free to:
 ## 🙏 Acknowledgments
 
 ### Data Sources & Infrastructure
+
 - **[Solana Foundation](https://solana.org)** - For the SIMD governance process
-- **[Solana Improvement Documents](https://github.com/solana-foundation/solana-improvement-documents)** - Source data repository
+- **[Solana Improvement Documents](https://github.com/solana-foundation/solana-improvement-documents)** -
+  Source data repository
 - **[Supabase](https://supabase.com)** - Database and backend infrastructure
 - **[Vercel](https://vercel.com)** - Hosting and deployment platform
 - **[OpenAI](https://openai.com)** - GPT-5-mini for AI summaries
 
 ### Community
+
 - **Solana Developer Community** - For feedback and support
 - **All Contributors** - Thank you for your contributions!
-
----
-
-## 🤖 Built with AI
-
-This project was **built primarily with AI assistance** using advanced language models and AI-powered development tools. The combination of human creativity and AI capabilities enabled rapid development of a production-ready application with:
-
-- Modern full-stack architecture
-- Industry-standard security practices
-- Comprehensive documentation
-- Automated testing and deployment
-
-**AI tools used:**
-- Code generation and refactoring
-- Security audit and vulnerability analysis
-- Documentation creation
-- Architecture design and optimization
-
-This demonstrates the power of human-AI collaboration in modern software development! 🚀
 
 ---
 
@@ -454,13 +415,13 @@ This demonstrates the power of human-AI collaboration in modern software develop
 
 <div align="center">
   <p>Made with 💜 for the Solana ecosystem</p>
-  <p><strong>Tracking SIMDs • Empowering the Community • Built with AI</strong></p>
+  <p><strong>Tracking SIMDs • Empowering the Community </strong></p>
 
   <br>
 
-  **If SIMD Digest helps you stay informed, consider supporting the project!**
+**If SIMD Digest helps you stay informed, consider supporting the project!**
 
-  SOL: `NbtprKrcGxbHBEK8dCQTnSdYEd2cxQaEEkrLmMbMvpF`
+SOL: `NbtprKrcGxbHBEK8dCQTnSdYEd2cxQaEEkrLmMbMvpF`
 
   <br>
 
