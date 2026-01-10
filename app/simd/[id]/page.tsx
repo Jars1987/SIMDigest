@@ -96,63 +96,110 @@ export default async function SIMDDetailPage({ params }: PageProps) {
     ? 'View Proposal on GitHub'
     : 'View Draft PR on GitHub';
 
+  // Get the latest PR for mobile header info
+  const latestPR = prs.length > 0 ? prs[0] : null;
+
   return (
-    <div className="min-h-screen py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-4 sm:py-8 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden w-full">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-lg font-mono text-solana-purple font-bold">
+        <div className="mb-6 sm:mb-8 w-full max-w-full overflow-hidden">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <span className="text-base sm:text-lg font-mono text-solana-purple font-bold">
               SIMD-{simd.id}
             </span>
-            <span className={`px-3 py-1 rounded-md text-sm font-medium border ${getStatusColor(simd.status)}`}>
+            <span className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium border ${getStatusColor(simd.status)}`}>
               {simd.status}
             </span>
             {simd.source_stage === 'pr' && (
-              <span className="px-3 py-1 rounded-md text-sm font-medium border bg-blue-500/20 text-blue-400 border-blue-500/30">
+              <span className="px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium border bg-blue-500/20 text-blue-400 border-blue-500/30">
                 PR-only
               </span>
             )}
+            {/* Mobile GitHub Link */}
+            {proposalLink && (
+              <a
+                href={proposalLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="lg:hidden flex items-center gap-1 px-2 py-1 rounded-md bg-white/10 text-white hover:bg-white/20 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                </svg>
+                <span className="text-xs">GitHub</span>
+              </a>
+            )}
           </div>
 
-          <h1 className="text-4xl font-bold text-white mb-4">{simd.title}</h1>
+          <h1 className="text-2xl sm:text-4xl font-bold text-white mb-3 sm:mb-4 break-words">{simd.title}</h1>
 
-          <div className="flex flex-wrap gap-4 text-sm text-gray-400">
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>Last activity: {formatDate(simd.last_activity_at)}</span>
+              <span>Last: {formatDate(simd.last_activity_at)}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               <span>Proposed: {formatDate(simd.proposal_updated_at)}</span>
             </div>
+            {/* Mobile: Last Commit Date */}
+            {latestPR?.last_commit_at && (
+              <div className="lg:hidden flex items-center gap-1 sm:gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Last commit: {formatDate(latestPR.last_commit_at)}</span>
+              </div>
+            )}
           </div>
+
+          {/* Mobile: Reviewers inline */}
+          {reviewers.length > 0 && (
+            <div className="lg:hidden mt-3 flex flex-wrap items-center gap-2">
+              <span className="text-xs text-gray-400">Reviewers:</span>
+              {reviewers.slice(0, 4).map((reviewer) => (
+                <a
+                  key={reviewer}
+                  href={`https://github.com/${reviewer}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2 py-1 rounded bg-solana-purple/20 text-solana-purple text-xs hover:bg-solana-purple/30 transition-colors"
+                >
+                  @{reviewer}
+                </a>
+              ))}
+              {reviewers.length > 4 && (
+                <span className="text-xs text-gray-400">+{reviewers.length - 4} more</span>
+              )}
+            </div>
+          )}
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full max-w-full overflow-hidden">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-8 min-w-0 w-full max-w-full overflow-hidden">
             {/* Summary */}
             {simd.summary && (
-              <section className="p-6 rounded-xl bg-solana-purple/10 border border-solana-purple/30">
-                <h2 className="text-xl font-bold text-white mb-3">Summary</h2>
-                <p className="text-gray-300">{simd.summary}</p>
+              <section className="p-4 sm:p-6 rounded-xl bg-solana-purple/10 border border-solana-purple/30 w-full max-w-full overflow-hidden">
+                <h2 className="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3">Summary</h2>
+                <p className="text-gray-300 text-sm sm:text-base break-words">{simd.summary}</p>
               </section>
             )}
 
             {/* Topics */}
             {simd.topics && simd.topics.length > 0 && (
-              <section>
-                <h2 className="text-xl font-bold text-white mb-3">Topics</h2>
+              <section className="w-full max-w-full overflow-hidden">
+                <h2 className="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3">Topics</h2>
                 <div className="flex flex-wrap gap-2">
                   {simd.topics.map((topic) => (
                     <span
                       key={topic}
-                      className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white"
+                      className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm"
                     >
                       {topic}
                     </span>
@@ -163,9 +210,9 @@ export default async function SIMDDetailPage({ params }: PageProps) {
 
             {/* Proposal Content */}
             {proposalContent && (
-              <section className="p-8 rounded-xl bg-white/5 border border-white/10">
-                <h2 className="text-2xl font-bold text-white mb-6">Full Proposal</h2>
-                <div className="prose prose-invert prose-purple max-w-none max-h-[600px] overflow-y-auto pr-4">
+              <section className="p-4 sm:p-8 rounded-xl bg-white/5 border border-white/10 w-full max-w-full overflow-hidden">
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Full Proposal</h2>
+                <div className="prose prose-invert prose-purple max-w-none max-h-[400px] sm:max-h-[600px] overflow-y-auto overflow-x-auto pr-2 sm:pr-4 w-full">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
@@ -222,9 +269,9 @@ export default async function SIMDDetailPage({ params }: PageProps) {
 
             {/* Conclusion */}
             {simd.conclusion && (
-              <section className="p-6 rounded-xl bg-solana-green/10 border border-solana-green/30">
-                <h2 className="text-xl font-bold text-white mb-3">Conclusion</h2>
-                <p className="text-gray-300">{simd.conclusion}</p>
+              <section className="p-4 sm:p-6 rounded-xl bg-solana-green/10 border border-solana-green/30 w-full max-w-full overflow-hidden">
+                <h2 className="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3">Conclusion</h2>
+                <p className="text-gray-300 text-sm sm:text-base break-words">{simd.conclusion}</p>
               </section>
             )}
 
@@ -239,10 +286,10 @@ export default async function SIMDDetailPage({ params }: PageProps) {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
-            {/* GitHub Links */}
-            <section className="p-6 rounded-xl bg-white/5 border border-white/10">
-              <h3 className="text-lg font-bold text-white mb-4">Links</h3>
+          <div className="space-y-4 sm:space-y-6 min-w-0 w-full max-w-full overflow-hidden">
+            {/* GitHub Links - Hidden on mobile (shown in header) */}
+            <section className="hidden lg:block p-4 sm:p-6 rounded-xl bg-white/5 border border-white/10">
+              <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">Links</h3>
               <div className="space-y-3">
                 {proposalLink ? (
                   <a
@@ -262,10 +309,10 @@ export default async function SIMDDetailPage({ params }: PageProps) {
               </div>
             </section>
 
-            {/* Related Pull Requests */}
+            {/* Related Pull Requests - Hidden on mobile */}
             {prs.length > 0 && (
-              <section className="p-6 rounded-xl bg-white/5 border border-white/10">
-                <h3 className="text-lg font-bold text-white mb-4">Pull Requests</h3>
+              <section className="hidden lg:block p-4 sm:p-6 rounded-xl bg-white/5 border border-white/10 overflow-hidden">
+                <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">Pull Requests</h3>
                 <div className="space-y-3">
                   {prs.map((pr) => (
                     <div key={pr.id} className="pb-3 border-b border-white/10 last:border-0 last:pb-0">
@@ -298,10 +345,10 @@ export default async function SIMDDetailPage({ params }: PageProps) {
               </section>
             )}
 
-            {/* Reviewers */}
+            {/* Reviewers - Hidden on mobile (shown in header) */}
             {reviewers.length > 0 && (
-              <section className="p-6 rounded-xl bg-white/5 border border-white/10">
-                <h3 className="text-lg font-bold text-white mb-4">Reviewers</h3>
+              <section className="hidden lg:block p-4 sm:p-6 rounded-xl bg-white/5 border border-white/10">
+                <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">Reviewers</h3>
                 <div className="flex flex-wrap gap-2">
                   {reviewers.map((reviewer) => (
                     <a
@@ -320,23 +367,23 @@ export default async function SIMDDetailPage({ params }: PageProps) {
 
             {/* Latest Messages */}
             {messages.length > 0 && (
-              <section className="p-6 rounded-xl bg-white/5 border border-white/10">
-                <h3 className="text-lg font-bold text-white mb-4">
+              <section className="p-4 sm:p-6 rounded-xl bg-white/5 border border-white/10 w-full max-w-full overflow-hidden">
+                <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">
                   Latest Discussion
-                  <span className="ml-2 text-sm font-normal text-gray-400">
-                    (showing {messages.length} of {simd.message_count || messages.length})
+                  <span className="ml-2 text-xs sm:text-sm font-normal text-gray-400">
+                    ({messages.length} of {simd.message_count || messages.length})
                   </span>
                 </h3>
                 <div className="space-y-4">
                   {messages.map((message) => (
-                    <div key={message.id} className="pb-4 border-b border-white/10 last:border-0 last:pb-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="font-medium text-white">{message.author}</span>
+                    <div key={message.id} className="pb-4 border-b border-white/10 last:border-0 last:pb-0 overflow-hidden">
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <span className="font-medium text-white text-sm">{message.author}</span>
                         <span className="text-xs text-gray-500">
                           {new Date(message.created_at).toLocaleDateString()}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-400 mb-2 line-clamp-3">{message.body}</p>
+                      <p className="text-sm text-gray-400 mb-2 line-clamp-3 break-words">{message.body}</p>
                       <a
                         href={message.url}
                         target="_blank"

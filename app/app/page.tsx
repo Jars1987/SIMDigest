@@ -51,42 +51,42 @@ export default function AppPage() {
   }
 
   return (
-    <div className="min-h-screen py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Hero Section - Newest SIMD */}
         {newestSIMD && (
-          <section className="mb-12">
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-solana-purple/20 via-solana-dark to-solana-green/20 border border-solana-purple/30 p-8">
+          <section className="mb-8 sm:mb-12">
+            <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-solana-purple/20 via-solana-dark to-solana-green/20 border border-solana-purple/30 p-4 sm:p-8">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-solana-purple/20 via-transparent to-transparent"></div>
 
               <div className="relative">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="px-3 py-1 rounded-full bg-solana-green/20 text-solana-green text-sm font-medium border border-solana-green/30">
-                    Latest Merged Proposal
+                <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
+                  <span className="px-2 sm:px-3 py-1 rounded-full bg-solana-green/20 text-solana-green text-xs sm:text-sm font-medium border border-solana-green/30">
+                    Latest Merged
                   </span>
-                  <span className="text-gray-400 text-sm">
-                    Updated {new Date(newestSIMD.proposal_updated_at).toLocaleDateString()}
+                  <span className="text-gray-400 text-xs sm:text-sm">
+                    {new Date(newestSIMD.proposal_updated_at).toLocaleDateString()}
                   </span>
                 </div>
 
-                <h2 className="text-3xl font-bold text-white mb-3">
+                <h2 className="text-xl sm:text-3xl font-bold text-white mb-2 sm:mb-3 break-words">
                   SIMD-{newestSIMD.id}: {newestSIMD.title}
                 </h2>
 
                 {newestSIMD.summary && (
-                  <p className="text-gray-300 text-lg mb-6 max-w-3xl">
+                  <p className="text-gray-300 text-sm sm:text-lg mb-4 sm:mb-6 line-clamp-3 sm:line-clamp-none">
                     {newestSIMD.summary}
                   </p>
                 )}
 
-                <div className="flex flex-wrap items-center gap-3 mb-6">
-                  <span className="px-3 py-1 rounded-full bg-solana-purple/20 text-solana-purple/90 border border-solana-purple/30 text-xs font-medium">
-                    Status: {newestSIMD.status}
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                  <span className="px-2 sm:px-3 py-1 rounded-full bg-solana-purple/20 text-solana-purple/90 border border-solana-purple/30 text-xs font-medium">
+                    {newestSIMD.status}
                   </span>
-                  {newestSIMD.topics?.map((topic) => (
+                  {newestSIMD.topics?.slice(0, 2).map((topic) => (
                     <span
                       key={topic}
-                      className="px-3 py-1 rounded-lg bg-white/10 text-white text-sm border border-white/20"
+                      className="px-2 sm:px-3 py-1 rounded-lg bg-white/10 text-white text-xs sm:text-sm border border-white/20"
                     >
                       {topic}
                     </span>
@@ -95,10 +95,10 @@ export default function AppPage() {
 
                 <Link
                   href={`/simd/${newestSIMD.id}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-solana-purple text-white font-medium hover:bg-solana-purple/80 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-lg bg-solana-purple text-white text-sm sm:text-base font-medium hover:bg-solana-purple/80 transition-colors"
                 >
                   View Details
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </Link>
@@ -110,43 +110,43 @@ export default function AppPage() {
         {/* Tabs Navigation */}
         <div className="mb-8">
           <div className="border-b border-white/10">
-            <nav className="flex gap-8">
+            <nav className="flex gap-2 sm:gap-8 overflow-x-auto pb-px">
               <button
                 onClick={() => setActiveTab('current')}
-                className={`pb-4 px-1 border-b-2 font-medium transition-colors ${
+                className={`pb-4 px-1 border-b-2 font-medium transition-colors whitespace-nowrap text-sm sm:text-base ${
                   activeTab === 'current'
                     ? 'border-solana-purple text-white'
                     : 'border-transparent text-gray-400 hover:text-white hover:border-white/20'
                 }`}
               >
-                Current Proposals
-                <span className="ml-2 px-2 py-0.5 rounded-full bg-solana-green/20 text-solana-green text-xs">
+                Current
+                <span className="ml-1 sm:ml-2 px-1.5 sm:px-2 py-0.5 rounded-full bg-solana-green/20 text-solana-green text-xs">
                   {openPRs.length}
                 </span>
               </button>
               <button
                 onClick={() => setActiveTab('merged')}
-                className={`pb-4 px-1 border-b-2 font-medium transition-colors ${
+                className={`pb-4 px-1 border-b-2 font-medium transition-colors whitespace-nowrap text-sm sm:text-base ${
                   activeTab === 'merged'
                     ? 'border-solana-purple text-white'
                     : 'border-transparent text-gray-400 hover:text-white hover:border-white/20'
                 }`}
               >
-                Merged Proposals
-                <span className="ml-2 px-2 py-0.5 rounded-full bg-solana-purple/20 text-solana-purple text-xs">
+                Merged
+                <span className="ml-1 sm:ml-2 px-1.5 sm:px-2 py-0.5 rounded-full bg-solana-purple/20 text-solana-purple text-xs">
                   {mergedSIMDs.length}
                 </span>
               </button>
               <button
                 onClick={() => setActiveTab('discussions')}
-                className={`pb-4 px-1 border-b-2 font-medium transition-colors ${
+                className={`pb-4 px-1 border-b-2 font-medium transition-colors whitespace-nowrap text-sm sm:text-base ${
                   activeTab === 'discussions'
                     ? 'border-solana-purple text-white'
                     : 'border-transparent text-gray-400 hover:text-white hover:border-white/20'
                 }`}
               >
                 Discussions
-                <span className="ml-2 px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-xs">
+                <span className="ml-1 sm:ml-2 px-1.5 sm:px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-xs">
                   {discussions.length}
                 </span>
               </button>
@@ -158,43 +158,43 @@ export default function AppPage() {
         <div className="min-h-[600px]">
           {/* Current Proposals Tab */}
           {activeTab === 'current' && (
-            <section>
+            <section className="w-full max-w-full">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-2">Current Proposals</h2>
-                <p className="text-gray-400">
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Current Proposals</h2>
+                <p className="text-gray-400 text-sm sm:text-base">
                   Active pull requests for SIMD proposals
                 </p>
               </div>
 
-              <div className="grid gap-4">
+              <div className="grid gap-4 w-full">
                 {openPRs.map((pr) => (
                   <Link
                     key={pr.pr_id}
                     href={`/simd/${pr.simd_id}`}
-                    className="block bg-white/5 rounded-xl border border-white/10 hover:border-solana-purple/50 transition-all p-6 cursor-pointer"
+                    className="block bg-white/5 rounded-xl border border-white/10 hover:border-solana-purple/50 transition-all p-4 sm:p-6 cursor-pointer w-full max-w-full overflow-hidden"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-semibold text-white">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+                          <h3 className="text-base sm:text-xl font-semibold text-white break-words max-w-full">
                             SIMD-{pr.simd_id}: {pr.simd_title || pr.pr_title}
                           </h3>
-                          <span className="px-2 py-1 rounded-md bg-solana-green/20 text-solana-green text-xs font-medium border border-solana-green/30">
+                          <span className="px-2 py-1 rounded-md bg-solana-green/20 text-solana-green text-xs font-medium border border-solana-green/30 shrink-0">
                             OPEN
                           </span>
                         </div>
 
                         {pr.summary && (
-                          <p className="text-gray-400 text-sm mb-3">{pr.summary}</p>
+                          <p className="text-gray-400 text-sm mb-3 line-clamp-2">{pr.summary}</p>
                         )}
 
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400">
                           <span>PR #{pr.pr_number}</span>
                           {pr.author && (
                             <span>by <span className="text-white">{pr.author}</span></span>
                           )}
                           {pr.last_commit_at && (
-                            <span>
+                            <span className="hidden sm:inline">
                               Last commit: {new Date(pr.last_commit_at).toLocaleDateString()}
                             </span>
                           )}
@@ -204,9 +204,9 @@ export default function AppPage() {
                         </div>
 
                         {pr.reviewer_logins && pr.reviewer_logins.length > 0 && (
-                          <div className="mt-3 flex items-center gap-2">
+                          <div className="mt-3 flex flex-wrap items-center gap-2">
                             <span className="text-sm text-gray-400">Reviewers:</span>
-                            <div className="flex gap-2">
+                            <div className="flex flex-wrap gap-2">
                               {pr.reviewer_logins.slice(0, 3).map((reviewer) => (
                                 <span
                                   key={reviewer}
@@ -225,7 +225,7 @@ export default function AppPage() {
                         )}
                       </div>
 
-                      <div className="ml-4 px-4 py-2 rounded-lg bg-solana-purple/20 text-solana-purple border border-solana-purple/30 hover:bg-solana-purple/30 transition-colors text-sm font-medium">
+                      <div className="sm:ml-4 px-4 py-2 rounded-lg bg-solana-purple/20 text-solana-purple border border-solana-purple/30 hover:bg-solana-purple/30 transition-colors text-sm font-medium text-center sm:shrink-0">
                         Details →
                       </div>
                     </div>
@@ -245,13 +245,13 @@ export default function AppPage() {
           {activeTab === 'merged' && (
             <section>
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-2">Merged Proposals</h2>
-                <p className="text-gray-400">
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Merged Proposals</h2>
+                <p className="text-gray-400 text-sm sm:text-base">
                   Proposals merged into main/proposals/
                 </p>
               </div>
 
-              <div className="grid gap-4">
+              <div className="grid gap-4 w-full">
                 {mergedSIMDs.map((simd) => (
                   <SIMDCard key={simd.id} simd={simd} />
                 ))}
@@ -267,47 +267,47 @@ export default function AppPage() {
 
           {/* Discussions Tab */}
           {activeTab === 'discussions' && (
-            <section>
+            <section className="w-full max-w-full">
               <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-2">SIMD Discussions</h2>
-                <p className="text-gray-400">
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">SIMD Discussions</h2>
+                <p className="text-gray-400 text-sm sm:text-base">
                   Community discussions and ideation
                 </p>
               </div>
 
-              <div className="grid gap-4">
+              <div className="grid gap-4 w-full">
                 {discussions.map((discussion) => (
                   <div
                     key={discussion.id}
-                    className="bg-white/5 rounded-xl border border-white/10 hover:border-solana-purple/50 transition-all p-6"
+                    className="bg-white/5 rounded-xl border border-white/10 hover:border-solana-purple/50 transition-all p-4 sm:p-6 w-full max-w-full overflow-hidden"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-start gap-2 sm:gap-3 mb-2">
                           <a
                             href={discussion.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-lg font-semibold text-white hover:text-solana-green transition-colors"
+                            className="text-base sm:text-lg font-semibold text-white hover:text-solana-green transition-colors break-words"
                           >
                             {discussion.title}
                           </a>
                           {discussion.simd_id && (
                             <Link
                               href={`/simd/${discussion.simd_id}`}
-                              className="px-2 py-1 rounded-md bg-solana-purple/20 text-solana-purple text-xs font-medium border border-solana-purple/30 hover:bg-solana-purple/30 transition-colors"
+                              className="px-2 py-1 rounded-md bg-solana-purple/20 text-solana-purple text-xs font-medium border border-solana-purple/30 hover:bg-solana-purple/30 transition-colors shrink-0"
                             >
                               SIMD-{discussion.simd_id}
                             </Link>
                           )}
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-400">
                           <span>#{discussion.discussion_number}</span>
                           {discussion.author && (
                             <span>by <span className="text-white">{discussion.author}</span></span>
                           )}
-                          <span>
+                          <span className="hidden sm:inline">
                             Updated {new Date(discussion.updated_at).toLocaleDateString()}
                           </span>
                           <span className="flex items-center gap-1">
@@ -323,9 +323,9 @@ export default function AppPage() {
                         href={discussion.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="ml-4 px-4 py-2 rounded-lg bg-solana-purple/20 text-solana-purple border border-solana-purple/30 hover:bg-solana-purple/30 transition-colors text-sm font-medium"
+                        className="sm:ml-4 px-4 py-2 rounded-lg bg-solana-purple/20 text-solana-purple border border-solana-purple/30 hover:bg-solana-purple/30 transition-colors text-sm font-medium text-center sm:shrink-0"
                       >
-                        View Discussion →
+                        View →
                       </a>
                     </div>
                   </div>

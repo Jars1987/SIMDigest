@@ -47,10 +47,10 @@ function VerifyContent() {
   }, [token]);
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center px-4 py-8 sm:p-4">
       <div className="absolute inset-0 bg-gradient-to-br from-solana-purple/20 via-solana-dark to-solana-green/20"></div>
-      <div className="relative max-w-md w-full bg-white/10 backdrop-blur-sm border border-solana-purple/30 rounded-lg p-8 text-center">
-        <h1 className="text-2xl font-bold mb-4">
+      <div className="relative w-full max-w-sm sm:max-w-md bg-white/10 backdrop-blur-sm border border-solana-purple/30 rounded-lg p-6 sm:p-8 text-center mx-4 sm:mx-0">
+        <h1 className="text-xl sm:text-2xl font-bold mb-4">
           {status === 'loading' && <span className="text-white">Verifying...</span>}
           {status === 'success' && <span className="bg-gradient-solana bg-clip-text text-transparent">Email Verified!</span>}
           {status === 'error' && <span className="text-red-400">Verification Failed</span>}
@@ -64,7 +64,7 @@ function VerifyContent() {
 
         {status === 'success' && (
           <div className="mb-4">
-            <svg className="w-16 h-16 text-solana-green mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-12 h-12 sm:w-16 sm:h-16 text-solana-green mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
             {email && (
