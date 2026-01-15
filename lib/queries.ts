@@ -94,6 +94,7 @@ export async function getSIMDMessages(simdId: string, limit = 5): Promise<SIMDMe
       .from('simd_messages')
       .select('*')
       .eq('simd_id', simdId)
+      .neq('author', 'simd-bot[bot]')
       .order('created_at', { ascending: false })
       .limit(limit);
 

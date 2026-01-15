@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/scripts/lib/db';
 import { verifyAdminAuth } from '@/lib/auth';
-import { octokit, REPO } from '@/scripts/lib/github';
 
 export async function GET(request: Request) {
   if (!verifyAdminAuth(request)) {
@@ -53,6 +52,23 @@ export async function GET(request: Request) {
       FROM simd_discussions
       WHERE updated_at >= ${sevenDaysAgoISO}
       ORDER BY updated_at DESC
+    `;
+
+    // Get actual discussion messages from the last 7 days (excluding bot messages)
+    const recentMessages = await sql`
+      SELECT
+        m.simd_id,
+        m.pr_number,
+        m.author,
+        m.body,
+        m.created_at,
+        m.url,
+        s.title as simd_title
+      FROM simd_messages m
+      LEFT JOIN simds s ON m.simd_id = s.id
+      WHERE m.created_at >= ${sevenDaysAgoISO}
+        AND m.author != 'simd-bot[bot]'
+      ORDER BY m.simd_id, m.created_at DESC
     `;
 
     // Build markdown content
@@ -110,8 +126,52 @@ export async function GET(request: Request) {
 
     markdown += `---\n\n`;
 
-    // Section 3: Discussion Activity
-    markdown += `## 💬 Discussion Activity (${discussionActivity.length})\n\n`;
+    // Section 3: Recent Discussion Messages (actual content)
+    markdown += `## 🗣️ Recent Discussion Messages\n\n`;
+
+    if (recentMessages.length === 0) {
+      markdown += `*No discussion messages in the last 7 days.*\n\n`;
+    } else {
+      // Group messages by SIMD
+      const messagesBySIMD: Record<string, typeof recentMessages> = {};
+      for (const msg of recentMessages) {
+        const key = msg.simd_id;
+        if (!messagesBySIMD[key]) {
+          messagesBySIMD[key] = [];
+        }
+        messagesBySIMD[key].push(msg);
+      }
+
+      for (const [simdId, messages] of Object.entries(messagesBySIMD)) {
+        const simdTitle = messages[0]?.simd_title || `SIMD-${simdId}`;
+        markdown += `### SIMD-${simdId}: ${simdTitle}\n\n`;
+
+        // Show up to 5 most recent messages per SIMD
+        const displayMessages = messages.slice(0, 5);
+        for (const msg of displayMessages) {
+          const date = new Date(msg.created_at).toLocaleDateString();
+          // Truncate long messages to ~300 chars
+          const body = msg.body.length > 300
+            ? msg.body.substring(0, 300).trim() + '...'
+            : msg.body;
+          // Clean up the body - remove excessive newlines
+          const cleanBody = body.replace(/\n{3,}/g, '\n\n').trim();
+
+          markdown += `**${msg.author}** (${date}):\n`;
+          markdown += `> ${cleanBody.replace(/\n/g, '\n> ')}\n\n`;
+          markdown += `[View on GitHub](${msg.url})\n\n`;
+        }
+
+        if (messages.length > 5) {
+          markdown += `*... and ${messages.length - 5} more messages*\n\n`;
+        }
+
+        markdown += `---\n\n`;
+      }
+    }
+
+    // Section 4: Discussion Activity (GitHub Discussions)
+    markdown += `## 💬 GitHub Discussions Activity (${discussionActivity.length})\n\n`;
 
     if (discussionActivity.length === 0) {
       markdown += `*No discussion activity in the last 7 days.*\n\n`;
@@ -133,12 +193,13 @@ export async function GET(request: Request) {
 
     markdown += `---\n\n`;
 
-    // Section 4: Summary Stats
+    // Section 5: Summary Stats
     markdown += `## 📊 Summary Statistics\n\n`;
     markdown += `- **New Proposals Merged:** ${newProposals.length}\n`;
     markdown += `- **Active PRs with Updates:** ${prActivity.length}\n`;
-    markdown += `- **Active Discussions:** ${discussionActivity.length}\n`;
-    markdown += `- **Total Activity Items:** ${newProposals.length + prActivity.length + discussionActivity.length}\n\n`;
+    markdown += `- **Discussion Messages:** ${recentMessages.length}\n`;
+    markdown += `- **GitHub Discussions:** ${discussionActivity.length}\n`;
+    markdown += `- **Total Activity Items:** ${newProposals.length + prActivity.length + recentMessages.length + discussionActivity.length}\n\n`;
 
     markdown += `---\n\n`;
     markdown += `*Generated on ${new Date().toLocaleString()}*\n`;
