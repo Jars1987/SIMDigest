@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { sql } from '@/scripts/lib/db';
+import { supabase } from '@/lib/supabase';
 import { verifyAdminAuth } from '@/lib/auth';
 
 export async function GET(request: Request) {
@@ -13,63 +13,74 @@ export async function GET(request: Request) {
     const sevenDaysAgoISO = sevenDaysAgo.toISOString();
 
     // Get new proposals merged in the last 7 days
-    const newProposals = await sql`
-      SELECT id, title, status, summary, topics, proposal_updated_at, main_proposal_path
-      FROM simds
-      WHERE source_stage = 'main'
-        AND proposal_updated_at >= ${sevenDaysAgoISO}
-      ORDER BY proposal_updated_at DESC
-    `;
+    const { data: newProposals, error: proposalsError } = await supabase
+      .from('simds')
+      .select('id, title, status, summary, topics, proposal_updated_at, main_proposal_path')
+      .eq('source_stage', 'main')
+      .gte('proposal_updated_at', sevenDaysAgoISO)
+      .order('proposal_updated_at', { ascending: false });
+
+    if (proposalsError) throw proposalsError;
 
     // Get PR activity (commits, reviews, comments) in the last 7 days
-    const prActivity = await sql`
-      SELECT
-        p.simd_id,
-        p.pr_number,
-        p.pr_title,
-        p.last_commit_at,
-        p.total_comments,
-        s.title as simd_title,
-        s.summary
-      FROM simd_prs p
-      LEFT JOIN simds s ON p.simd_id = s.id
-      WHERE p.state = 'open'
-        AND p.last_commit_at >= ${sevenDaysAgoISO}
-      ORDER BY p.last_commit_at DESC
-    `;
+    // Note: Supabase doesn't support JOINs directly, so we fetch PRs and enrich with SIMD data
+    const { data: prActivityRaw, error: prError } = await supabase
+      .from('simd_prs')
+      .select('simd_id, pr_number, pr_title, last_commit_at, issue_comment_count, review_comment_count')
+      .eq('state', 'open')
+      .gte('last_commit_at', sevenDaysAgoISO)
+      .order('last_commit_at', { ascending: false });
+
+    if (prError) throw prError;
+
+    // Enrich PR data with SIMD titles
+    const prActivity = await Promise.all(
+      (prActivityRaw || []).map(async (pr) => {
+        const { data: simd } = await supabase
+          .from('simds')
+          .select('title, summary')
+          .eq('id', pr.simd_id)
+          .single();
+        return {
+          ...pr,
+          total_comments: (pr.issue_comment_count || 0) + (pr.review_comment_count || 0),
+          simd_title: simd?.title || null,
+          summary: simd?.summary || null,
+        };
+      })
+    );
 
     // Get discussion activity in the last 7 days
-    const discussionActivity = await sql`
-      SELECT
-        id,
-        simd_id,
-        discussion_number,
-        title,
-        author,
-        updated_at,
-        comment_count,
-        url
-      FROM simd_discussions
-      WHERE updated_at >= ${sevenDaysAgoISO}
-      ORDER BY updated_at DESC
-    `;
+    const { data: discussionActivity, error: discussionError } = await supabase
+      .from('simd_discussions')
+      .select('id, simd_id, discussion_number, title, author, updated_at, comment_count, url')
+      .gte('updated_at', sevenDaysAgoISO)
+      .order('updated_at', { ascending: false });
+
+    if (discussionError) throw discussionError;
 
     // Get actual discussion messages from the last 7 days (excluding bot messages)
-    const recentMessages = await sql`
-      SELECT
-        m.simd_id,
-        m.pr_number,
-        m.author,
-        m.body,
-        m.created_at,
-        m.url,
-        s.title as simd_title
-      FROM simd_messages m
-      LEFT JOIN simds s ON m.simd_id = s.id
-      WHERE m.created_at >= ${sevenDaysAgoISO}
-        AND m.author != 'simd-bot[bot]'
-      ORDER BY m.simd_id, m.created_at DESC
-    `;
+    const { data: messagesRaw, error: messagesError } = await supabase
+      .from('simd_messages')
+      .select('simd_id, pr_number, author, body, created_at, url')
+      .gte('created_at', sevenDaysAgoISO)
+      .neq('author', 'simd-bot[bot]')
+      .order('created_at', { ascending: false });
+
+    if (messagesError) throw messagesError;
+
+    // Enrich messages with SIMD titles
+    const simdIds = [...new Set((messagesRaw || []).map(m => m.simd_id))];
+    const { data: simdsForMessages } = await supabase
+      .from('simds')
+      .select('id, title')
+      .in('id', simdIds);
+
+    const simdTitleMap = new Map((simdsForMessages || []).map(s => [s.id, s.title]));
+    const recentMessages = (messagesRaw || []).map(m => ({
+      ...m,
+      simd_title: simdTitleMap.get(m.simd_id) || null,
+    }));
 
     // Build markdown content
     let markdown = `# SIMD Digest - 7 Day Activity Report\n\n`;
@@ -224,8 +235,9 @@ export async function GET(request: Request) {
 
   } catch (error) {
     console.error('Error generating digest:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to generate digest' },
+      { error: 'Failed to generate digest', details: errorMessage },
       { status: 500 }
     );
   }
