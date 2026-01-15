@@ -133,13 +133,22 @@ export async function GET(request: Request) {
       markdown += `*No discussion messages in the last 7 days.*\n\n`;
     } else {
       // Group messages by SIMD
-      const messagesBySIMD: Record<string, typeof recentMessages> = {};
+      interface DigestMessage {
+        simd_id: string;
+        pr_number: number;
+        author: string;
+        body: string;
+        created_at: string;
+        url: string;
+        simd_title: string | null;
+      }
+      const messagesBySIMD: Record<string, DigestMessage[]> = {};
       for (const msg of recentMessages) {
         const key = msg.simd_id;
         if (!messagesBySIMD[key]) {
           messagesBySIMD[key] = [];
         }
-        messagesBySIMD[key].push(msg);
+        messagesBySIMD[key].push(msg as DigestMessage);
       }
 
       for (const [simdId, messages] of Object.entries(messagesBySIMD)) {
