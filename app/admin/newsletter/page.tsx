@@ -31,6 +31,11 @@ export default function AdminNewsletterPage() {
   const [saving, setSaving] = useState(false);
   const [sending, setSending] = useState(false);
 
+  // Preview state
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewHtml, setPreviewHtml] = useState('');
+  const [loadingPreview, setLoadingPreview] = useState(false);
+
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
     if (token) {
@@ -257,6 +262,39 @@ export default function AdminNewsletterPage() {
     }
   };
 
+  const handlePreview = async () => {
+    if (!content) {
+      alert('Please add content to preview');
+      return;
+    }
+
+    setLoadingPreview(true);
+    try {
+      const token = localStorage.getItem('admin_token');
+      const response = await fetch('/api/admin/preview', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ content })
+      });
+
+      if (response.ok) {
+        const { html } = await response.json();
+        setPreviewHtml(html);
+        setShowPreview(true);
+      } else {
+        alert('Failed to generate preview');
+      }
+    } catch (error) {
+      console.error('Error generating preview:', error);
+      alert('Failed to generate preview');
+    } finally {
+      setLoadingPreview(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-solana-dark">
@@ -375,6 +413,13 @@ export default function AdminNewsletterPage() {
                 {saving ? 'Saving...' : 'Save Draft'}
               </button>
               <button
+                onClick={handlePreview}
+                disabled={loadingPreview || !content}
+                className="px-6 py-3 bg-solana-green/20 rounded-lg text-solana-green font-medium hover:bg-solana-green/30 transition-colors disabled:opacity-50 border border-solana-green/30"
+              >
+                {loadingPreview ? 'Loading...' : 'Preview Email'}
+              </button>
+              <button
                 onClick={() => {
                   setShowComposer(false);
                   setTitle('');
@@ -474,6 +519,38 @@ export default function AdminNewsletterPage() {
           )}
         </div>
       </div>
+
+      {/* Preview Modal */}
+      {showPreview && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b bg-gray-50">
+              <h3 className="text-lg font-bold text-gray-800">Email Preview</h3>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+              >
+                &times;
+              </button>
+            </div>
+            <div className="overflow-auto flex-1 bg-gray-100 p-4">
+              <div
+                className="mx-auto"
+                style={{ maxWidth: '650px' }}
+                dangerouslySetInnerHTML={{ __html: previewHtml }}
+              />
+            </div>
+            <div className="p-4 border-t bg-gray-50 flex justify-end gap-3">
+              <button
+                onClick={() => setShowPreview(false)}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
