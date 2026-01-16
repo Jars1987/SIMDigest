@@ -231,6 +231,32 @@ export default function AdminNewsletterPage() {
     }
   };
 
+  const handleDownloadStats = async () => {
+    try {
+      const token = localStorage.getItem('admin_token');
+      const response = await fetch('/api/admin/stats', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `simd-stats-${new Date().toISOString().split('T')[0]}.md`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        alert('Failed to download stats');
+      }
+    } catch (error) {
+      console.error('Error downloading stats:', error);
+      alert('Failed to download stats');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-solana-dark">
@@ -374,6 +400,12 @@ export default function AdminNewsletterPage() {
               className="px-6 py-3 bg-solana-blue/20 rounded-lg text-solana-blue font-medium hover:bg-solana-blue/30 transition-colors border border-solana-blue/30"
             >
               📥 Download 7-Day Digest
+            </button>
+            <button
+              onClick={handleDownloadStats}
+              className="px-6 py-3 bg-solana-purple/20 rounded-lg text-solana-purple font-medium hover:bg-solana-purple/30 transition-colors border border-solana-purple/30"
+            >
+              📊 Download Stats Report
             </button>
           </div>
         )}
